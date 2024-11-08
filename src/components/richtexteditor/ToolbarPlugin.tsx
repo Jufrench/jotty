@@ -10,19 +10,21 @@ import { $createParagraphNode, $getSelection, $isParagraphNode, $isRangeSelectio
   FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, INDENT_CONTENT_COMMAND, OUTDENT_CONTENT_COMMAND,
   REDO_COMMAND, UNDO_COMMAND } from "lexical";
 import { mergeRegister, $getNearestBlockElementAncestorOrThrow, $getNearestNodeOfType } from "@lexical/utils";
+import { $createHeadingNode, $isHeadingNode, HeadingNode, HeadingTagType, $createQuoteNode } from "@lexical/rich-text";
+import { $setBlocksType, $getSelectionStyleValueForProperty, $patchStyleText } from "@lexical/selection";
 
 import FontSizeMenu from './FontSizeMenu';
 
 const LowPriority: CommandListenerPriority = 1;
 
 const textElementOptions = [
-  { label: "Paragraph", identifier: "p", domElement: <IconParkingCircle /> },
-  { label: "Heading 1", identifier: "h1", domElement: <IconH1 /> },
-  { label: "Heading 2", identifier: "h2", domElement: <IconH2 /> },
-  { label: "Heading 3", identifier: "h3", domElement: <IconH3 /> },
-  { label: "Heading 4", identifier: "h4", domElement: <IconH4 /> },
-  { label: "Heading 5", identifier: "h5", domElement: <IconH5 /> },
-  { label: "Heading 6", identifier: "h6", domElement: <IconH6 /> },
+  { label: "Paragraph", tag: "p", domElement: <IconParkingCircle /> },
+  { label: "Heading 1", tag: "h1", domElement: <IconH1 /> },
+  { label: "Heading 2", tag: "h2", domElement: <IconH2 /> },
+  { label: "Heading 3", tag: "h3", domElement: <IconH3 /> },
+  { label: "Heading 4", tag: "h4", domElement: <IconH4 /> },
+  { label: "Heading 5", tag: "h5", domElement: <IconH5 /> },
+  { label: "Heading 6", tag: "h6", domElement: <IconH6 /> },
 ];
 
 export default function ToolbarPlugin() {
@@ -38,6 +40,28 @@ export default function ToolbarPlugin() {
   const handleFormatBold = () => {
     editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
   }
+
+  const formatTextElementType = (tag: string | HeadingTagType) => {
+    console.log('%cidentifier:', 'color:tomato', tag);
+    switch(tag) {
+      case "p":
+        editor.update(() => {
+          const selection = $getSelection();
+          if ($isRangeSelection(selection)) $setBlocksType(selection, () => $createParagraphNode());
+          editor.getRootElement()?.focus();
+        });
+        return;
+      default:
+        editor.update(() => {
+          const selection = $getSelection();
+          if ($isRangeSelection(selection)) {
+            $setBlocksType(selection, () => $createHeadingNode(tag as HeadingTagType));
+          }
+          editor.getRootElement()?.focus();
+        });
+        return;
+    }
+  };
 
   // UPDATE TOOLBAR ACTIVE STATES
   // =========================
@@ -82,7 +106,7 @@ export default function ToolbarPlugin() {
           <Menu.Dropdown>
             {textElementOptions.map(item => {
               return (
-                <Menu.Item key={item.label}>
+                <Menu.Item key={item.label} onClick={() => formatTextElementType(item.tag)}>
                   <Group>
                     <>{item.domElement}</>
                     <span>{item.label}</span>
