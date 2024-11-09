@@ -39,6 +39,7 @@ export default function FontSizeMenu(props: FontSizeMenuProps) {
             //   inputRef.current.focus();
             // }
           }}
+          size='xs'
           // value={value}
           />
       </Menu.Target>

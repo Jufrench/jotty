@@ -1,4 +1,4 @@
-import { ColorPicker, Popover, Text, Button } from '@mantine/core';
+import { ColorPicker, Popover, Text, Button, Group, Stack } from '@mantine/core';
 
 export default function PopoverColorPicker(props: { opened: boolean }) {
   return (
@@ -7,8 +7,10 @@ export default function PopoverColorPicker(props: { opened: boolean }) {
         <Button>Toggle popover</Button>
       </Popover.Target> */}
       <Popover.Dropdown>
-        <Text size="xs">This is uncontrolled popover, it is opened when button is clicked</Text>
-        <ColorPicker />
+        {/* <Stack style={{ justifyContent: 'center' }}> */}
+          {/* <Button>X</Button> */}
+          <ColorPicker />
+        {/* </Stack> */}
       </Popover.Dropdown>
     </Popover>
   );

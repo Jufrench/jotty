@@ -3,7 +3,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActionIcon, Button, Center, Divider, Group, Menu } from '@mantine/core';
 import { IconArrowBackUp, IconArrowForwardUp, IconBold, IconItalic, IconH1, IconH2, IconH3,
   IconH4, IconH5, IconH6, IconParkingCircle, IconStrikethrough, IconTextColor,
-  IconTriangleInvertedFilled, IconUnderline } from '@tabler/icons-react';
+  IconTriangleInvertedFilled, IconTriangleFilled, IconUnderline, IconHighlight, IconLink,
+  IconAlignLeft, IconAlignCenter, IconAlignRight, IconAlignJustified, IconList, IconListNumbers } from '@tabler/icons-react';
 
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $createParagraphNode, $getSelection, $isParagraphNode, $isRangeSelection, $isTextNode, $setSelection, $createTextNode,
@@ -29,6 +30,19 @@ const textElementOptions = [
   { label: "Heading 4", tag: "h4", domElement: <IconH4 /> },
   { label: "Heading 5", tag: "h5", domElement: <IconH5 /> },
   { label: "Heading 6", tag: "h6", domElement: <IconH6 /> },
+];
+
+const textAlignOptions = [
+  { alignment: "left", domElement: <IconAlignLeft /> },
+  { alignment: "center", domElement: <IconAlignCenter /> },
+  { alignment: "right", domElement: <IconAlignRight /> },
+  { alignment: "justify", domElement: <IconAlignJustified /> },
+];
+
+const listTypeOptions = [
+  { type: "bullet", domElement: <IconList /> },
+  { type: "number", domElement: <IconListNumbers /> },
+  // { type: "check", domElement: <CheckBoxOutlineBlankRounded /> },
 ];
 
 export default function ToolbarPlugin() {
@@ -81,6 +95,10 @@ export default function ToolbarPlugin() {
         });
         return;
     }
+  };
+
+  const formatTextAlign = (identifier: string | ElementFormatType) => {
+    editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, identifier as ElementFormatType);
   };
 
   // UPDATE TOOLBAR ACTIVE STATES
@@ -161,26 +179,35 @@ export default function ToolbarPlugin() {
     );
   }, [editor, updateToolbar])
 
+  const [isTextElOpen, setIsTextElOpen] = useState<boolean>(false);
+  const [isTextAlignOpen, setIsTextAlignOpen] = useState<boolean>(false);
+
   return (
-    <div style={{ border: '2px solid gray', padding: 3 }}>
+    <div style={{ border: '2px solid gray', padding: 3, background: '#dfe2f2' }}>
       {/* <Button.Group>
         <ActionIcon variant="default"><IconArrowBackUp /></ActionIcon>
         <ActionIcon variant="default"><IconArrowForwardUp /></ActionIcon>
       </Button.Group> */}
-      <Group gap={1}>
-        <ActionIcon variant="default"><IconArrowBackUp /></ActionIcon>
-        <ActionIcon variant="default"><IconArrowForwardUp /></ActionIcon>
-        <Divider orientation="vertical" />
-        {/* <Button variant="default" rightSection={<IconTriangleInvertedFilled size={10} />}>Text</Button> */}
-        <Menu withArrow>
+      <Group gap={2}>
+        <ActionIcon variant='transparent'><IconArrowBackUp /></ActionIcon>
+        <ActionIcon variant='transparent'><IconArrowForwardUp /></ActionIcon>
+        <Divider orientation='vertical' color='#99a0ca' />
+        {/* <Button variant="transparent" rightSection={<IconTriangleInvertedFilled size={10} />}>Text</Button> */}
+        <Menu opened={isTextElOpen}>
           <Menu.Target>
-            <Button>
+            <Button
+              onClick={() => setIsTextElOpen(!isTextElOpen)}
+              rightSection={isTextElOpen ? <IconTriangleFilled size={8} /> : <IconTriangleInvertedFilled size={8} />}
+              size='xs'
+              variant='transparent'
+            >
             {textType === ""
               ? textElementOptions[0].domElement
               : textElementOptions[textElementOptions.findIndex(item => item.tag === textType)]?.domElement}
             </Button>
           </Menu.Target>
-          <Menu.Dropdown>
+          {/* <Divider orientation='vertical' color='#99a0ca' mr={2} /> */}
+          <Menu.Dropdown style={{ marginLeft: 2, marginRight: 2 }}>
             {textElementOptions.map(item => {
               return (
                 <Menu.Item key={item.label} onClick={() => formatTextElementType(item.tag)}>
@@ -194,19 +221,58 @@ export default function ToolbarPlugin() {
           </Menu.Dropdown>
         </Menu>
         <FontSizeMenu fontSize={"12"} onInputChange={(value) => console.log('value:', value)} />
-        <ActionIcon style={{ }} onClick={handleFormatBold} variant="default"><IconBold /></ActionIcon>
-        <ActionIcon style={{ }} onClick={handleFormatItalic} variant="default"><IconItalic /></ActionIcon>
-        <ActionIcon style={{ }} onClick={handleFormatUnderline} variant="default"><IconUnderline /></ActionIcon>
-        <ActionIcon style={{ }} onClick={handleFormatStrikethrough} variant="default"><IconStrikethrough /></ActionIcon>
+        <Divider orientation='vertical' color='#99a0ca' ml={4} />
+        <ActionIcon style={{ }} onClick={handleFormatBold} variant='transparent'><IconBold /></ActionIcon>
+        <ActionIcon style={{ }} onClick={handleFormatItalic} variant='transparent'><IconItalic /></ActionIcon>
+        <ActionIcon style={{ }} onClick={handleFormatUnderline} variant='transparent'><IconUnderline /></ActionIcon>
+        <ActionIcon style={{ }} onClick={handleFormatStrikethrough} variant='transparent'><IconStrikethrough /></ActionIcon>
         <ActionIcon
           onClick={() => {
             handleTextColorChange(textColor);
             setIsColorPickerOpen(!isColorPickerOpen);
           }}
-          variant="default">
+          variant='transparent'>
             <IconTextColor />
         </ActionIcon>
         <PopoverColorPicker opened={isColorPickerOpen} />
+        <ActionIcon
+          onClick={() => {
+            handleTextColorChange(textColor);
+            setIsColorPickerOpen(!isColorPickerOpen);
+          }}
+          variant='transparent'>
+            <IconHighlight />
+        </ActionIcon>
+        <PopoverColorPicker opened={isColorPickerOpen} />
+        <ActionIcon style={{ }} onClick={handleFormatStrikethrough} variant='transparent'><IconLink /></ActionIcon>
+        <Divider orientation='vertical' color='#99a0ca' />
+        <Menu opened={isTextAlignOpen}>
+          <Menu.Target>
+              <Button
+                onClick={() => setIsTextAlignOpen(!isTextAlignOpen)}
+                rightSection={isTextAlignOpen ? <IconTriangleFilled size={8} /> : <IconTriangleInvertedFilled size={8} />}
+                size='xs'
+                variant='transparent'
+              >
+              {textAlign === ""
+                ? textAlignOptions[0].domElement
+                : textAlignOptions[textAlignOptions.findIndex(item => item.alignment === textAlign)]?.domElement}
+              </Button>
+            </Menu.Target>
+          <Menu.Dropdown style={{ marginLeft: 2, marginRight: 2 }}>
+            {textAlignOptions.map(item => {
+              return (
+                <Menu.Item key={item.alignment} onClick={() => formatTextAlign(item.alignment)}>
+                  <Group>
+                    <>{item.domElement}</>
+                    <span>{item.alignment}</span>
+                  </Group>
+                </Menu.Item>
+              );
+            })}
+          </Menu.Dropdown>
+        </Menu>
+        <Divider orientation='vertical' color='#99a0ca' />
         {/* <Menu>
           <Menu.Item>item 1</Menu.Item>
         </Menu> */}
