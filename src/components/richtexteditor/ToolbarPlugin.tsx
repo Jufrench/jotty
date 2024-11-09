@@ -4,7 +4,6 @@ import { ActionIcon, Button, Center, Divider, Group, Menu } from '@mantine/core'
 import { IconArrowBackUp, IconArrowForwardUp, IconBold, IconItalic, IconH1, IconH2, IconH3,
   IconH4, IconH5, IconH6, IconParkingCircle, IconStrikethrough, IconTextColor,
   IconTriangleInvertedFilled, IconUnderline } from '@tabler/icons-react';
-import { ColorPicker } from '@mantine/core';
 
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $createParagraphNode, $getSelection, $isParagraphNode, $isRangeSelection, $isTextNode, $setSelection, $createTextNode,
@@ -17,6 +16,8 @@ import { $setBlocksType, $getSelectionStyleValueForProperty, $patchStyleText } f
 import { $isListItemNode, ListType, ListNode, INSERT_UNORDERED_LIST_COMMAND, INSERT_ORDERED_LIST_COMMAND, INSERT_CHECK_LIST_COMMAND } from "@lexical/list";
 
 import FontSizeMenu from './FontSizeMenu';
+import PopoverColorPicker from './PopoverColorPicker';
+import { useDisclosure } from '@mantine/hooks';
 
 const LowPriority: CommandListenerPriority = 1;
 
@@ -41,6 +42,8 @@ export default function ToolbarPlugin() {
   const [isUnderlineActive, setIsUnderlineActive] = useState<boolean>(false);
   const [isStrikethroughActive, setIsStrikethroughActive] = useState<boolean>(false);
   const [textColor, setTextColor] = useState<string>("");
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState<boolean>(false);
+  // const [opened, { close, open }] = useDisclosure(false);
   const [textAlign, setTextAlign] = useState<string>("left");
   const [listType, setListType] = useState<string>("bullet");
 
@@ -60,7 +63,6 @@ export default function ToolbarPlugin() {
   };
 
   const formatTextElementType = (tag: string | HeadingTagType) => {
-    console.log('%cidentifier:', 'color:tomato', tag);
     switch(tag) {
       case "p":
         editor.update(() => {
@@ -196,7 +198,15 @@ export default function ToolbarPlugin() {
         <ActionIcon style={{ }} onClick={handleFormatItalic} variant="default"><IconItalic /></ActionIcon>
         <ActionIcon style={{ }} onClick={handleFormatUnderline} variant="default"><IconUnderline /></ActionIcon>
         <ActionIcon style={{ }} onClick={handleFormatStrikethrough} variant="default"><IconStrikethrough /></ActionIcon>
-        <ActionIcon style={{ }} onClick={handleFormatStrikethrough} variant="default"><IconTextColor /></ActionIcon>
+        <ActionIcon
+          onClick={() => {
+            handleTextColorChange(textColor);
+            setIsColorPickerOpen(!isColorPickerOpen);
+          }}
+          variant="default">
+            <IconTextColor />
+        </ActionIcon>
+        <PopoverColorPicker opened={isColorPickerOpen} />
         {/* <Menu>
           <Menu.Item>item 1</Menu.Item>
         </Menu> */}
