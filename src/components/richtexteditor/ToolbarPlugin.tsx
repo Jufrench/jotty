@@ -218,7 +218,8 @@ export default function ToolbarPlugin() {
         <ActionIcon variant='transparent'><IconArrowBackUp /></ActionIcon>
         <ActionIcon variant='transparent'><IconArrowForwardUp /></ActionIcon>
         <Divider orientation='vertical' color='#99a0ca' />
-        {/* <Button variant="transparent" rightSection={<IconTriangleInvertedFilled size={10} />}>Text</Button> */}
+
+        {/* Text Element Menu Selection */}
         <Menu opened={isTextElOpen}>
           <Menu.Target>
             <Button
@@ -232,8 +233,7 @@ export default function ToolbarPlugin() {
               : textElementOptions[textElementOptions.findIndex(item => item.tag === textType)]?.domElement}
             </Button>
           </Menu.Target>
-          {/* <Divider orientation='vertical' color='#99a0ca' mr={2} /> */}
-          <Menu.Dropdown style={{ marginLeft: 2, marginRight: 2 }}>
+          <Menu.Dropdown>
             {textElementOptions.map(item => {
               return (
                 <Menu.Item key={item.label} onClick={() => formatTextElementType(item.tag)}>
@@ -246,6 +246,8 @@ export default function ToolbarPlugin() {
             })}
           </Menu.Dropdown>
         </Menu>
+        
+        {/* Font Size Menu Selection */}
         <FontSizeMenu fontSize={"12"} onInputChange={(value) => console.log('value:', value)} />
         <Divider orientation='vertical' color='#99a0ca' ml={4} />
         <ActionIcon style={{ }} onClick={handleFormatBold} variant='transparent'><IconBold /></ActionIcon>
@@ -284,7 +286,7 @@ export default function ToolbarPlugin() {
                 : textAlignOptions[textAlignOptions.findIndex(item => item.alignment === textAlign)]?.domElement}
               </Button>
             </Menu.Target>
-          <Menu.Dropdown style={{ marginLeft: 2, marginRight: 2 }}>
+          <Menu.Dropdown>
             {textAlignOptions.map(item => {
               return (
                 <Menu.Item key={item.alignment} onClick={() => formatTextAlign(item.alignment)}>

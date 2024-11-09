@@ -27,7 +27,6 @@ export default function FontSizeMenu(props: FontSizeMenuProps) {
         {/* <FontInput /> */}
         {/* <Button>Button</Button> */}
         <TextInput
-          // ref={inputRef}
           onChange={(newValue: any) => {
             props.onInputChange(newValue.currentTarget.value);
             setValue(newValue);
@@ -40,6 +39,7 @@ export default function FontSizeMenu(props: FontSizeMenuProps) {
             // }
           }}
           size='xs'
+          styles={{ input: { width: '50px' } }}
           // value={value}
           />
       </Menu.Target>

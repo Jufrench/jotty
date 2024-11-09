@@ -1,0 +1,12 @@
+/* EDITOR ROOT STYLES
+======================== */
+.content-editable-root {
+  padding: 10px;
+  border: 1px solid #fca13a;
+}
+
+/* TEXT STYLES
+======================== */
+.editor-text-paragraph {
+  margin: 0;
+}
