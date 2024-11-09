@@ -4,7 +4,8 @@ import { ActionIcon, Button, Center, Divider, Group, Menu } from '@mantine/core'
 import { IconArrowBackUp, IconArrowForwardUp, IconBold, IconItalic, IconH1, IconH2, IconH3,
   IconH4, IconH5, IconH6, IconParkingCircle, IconStrikethrough, IconTextColor,
   IconTriangleInvertedFilled, IconTriangleFilled, IconUnderline, IconHighlight, IconLink,
-  IconAlignLeft, IconAlignCenter, IconAlignRight, IconAlignJustified, IconList, IconListNumbers } from '@tabler/icons-react';
+  IconAlignLeft, IconAlignCenter, IconAlignRight, IconAlignJustified, IconList, IconListNumbers,
+  IconClearFormatting } from '@tabler/icons-react';
 
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $createParagraphNode, $getSelection, $isParagraphNode, $isRangeSelection, $isTextNode, $setSelection, $createTextNode,
@@ -99,6 +100,31 @@ export default function ToolbarPlugin() {
 
   const formatTextAlign = (identifier: string | ElementFormatType) => {
     editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, identifier as ElementFormatType);
+  };
+
+  const handleClearFormat = () => {
+    editor.update(() => {
+      const selection = $getSelection();
+      
+      if ($isRangeSelection(selection)) {
+        const nodes = selection.getNodes();
+
+        // if nothing is selected/highlighted do nothing
+        if (selection.isCollapsed()) {
+          return;
+        }
+
+        nodes.forEach(node => {
+          if ($isTextNode(node)) {
+            node.setFormat(0);
+            node.setStyle("");
+            if (!$isHeadingNode(node.getParent())) {
+              node.getParent()?.replace($createParagraphNode(), true);
+            }
+          }
+        });
+      }
+    });
   };
 
   // UPDATE TOOLBAR ACTIVE STATES
@@ -244,7 +270,6 @@ export default function ToolbarPlugin() {
             <IconHighlight />
         </ActionIcon>
         <PopoverColorPicker opened={isColorPickerOpen} />
-        <ActionIcon style={{ }} onClick={handleFormatStrikethrough} variant='transparent'><IconLink /></ActionIcon>
         <Divider orientation='vertical' color='#99a0ca' />
         <Menu opened={isTextAlignOpen}>
           <Menu.Target>
@@ -273,6 +298,7 @@ export default function ToolbarPlugin() {
           </Menu.Dropdown>
         </Menu>
         <Divider orientation='vertical' color='#99a0ca' />
+        <ActionIcon style={{ }} onClick={handleClearFormat} variant='transparent'><IconClearFormatting /></ActionIcon>
         {/* <Menu>
           <Menu.Item>item 1</Menu.Item>
         </Menu> */}
