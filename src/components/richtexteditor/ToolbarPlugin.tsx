@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { ActionIcon, Button, Center, Divider, Group, Menu } from '@mantine/core';
-import { IconBold, IconAdjustments, IconArrowBackUp, IconArrowForwardUp, IconTriangleInvertedFilled, IconH1, IconH2, IconH3,
-  IconH4, IconH5, IconH6, IconParkingCircle } from '@tabler/icons-react';
+import { IconArrowBackUp, IconArrowForwardUp, IconBold, IconItalic, IconH1, IconH2, IconH3,
+  IconH4, IconH5, IconH6, IconParkingCircle, IconStrikethrough, IconTextColor,
+  IconTriangleInvertedFilled, IconUnderline } from '@tabler/icons-react';
+import { ColorPicker } from '@mantine/core';
 
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $createParagraphNode, $getSelection, $isParagraphNode, $isRangeSelection, $isTextNode, $setSelection, $createTextNode,
@@ -38,15 +40,24 @@ export default function ToolbarPlugin() {
   const [isItalicActive, setIsItalicActive] = useState<boolean>(false);
   const [isUnderlineActive, setIsUnderlineActive] = useState<boolean>(false);
   const [isStrikethroughActive, setIsStrikethroughActive] = useState<boolean>(false);
+  const [textColor, setTextColor] = useState<string>("");
   const [textAlign, setTextAlign] = useState<string>("left");
   const [listType, setListType] = useState<string>("bullet");
 
 
   // HANDLE FORMATTING OF TEXT
   // =========================
-  const handleFormatBold = () => {
-    editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
-  }
+  const handleFormatBold = () => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
+  const handleFormatItalic = () => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
+  const handleFormatUnderline = () => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
+  const handleFormatStrikethrough = () => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
+  const handleTextColorChange = (color: any) => {
+    editor.update(() => {
+      const selection = $getSelection();
+      if ($isRangeSelection(selection)) $patchStyleText(selection, {"color": color as string});
+    });
+    setTextColor(color as string);
+  };
 
   const formatTextElementType = (tag: string | HeadingTagType) => {
     console.log('%cidentifier:', 'color:tomato', tag);
@@ -82,8 +93,8 @@ export default function ToolbarPlugin() {
       setIsItalicActive(selection.hasFormat("italic"));
       setIsUnderlineActive(selection.hasFormat("underline"));
       setIsStrikethroughActive(selection.hasFormat("strikethrough"));
+      setTextColor($getSelectionStyleValueForProperty(selection, "color", textColor));
       // setFontSize($getSelectionStyleValueForProperty(selection, "font-size", `${theme.typography.body1.fontSize}`).replace("px", ""));
-      // setTextColor($getSelectionStyleValueForProperty(selection, "color", textColor));
       // setTextHighlightColor($getSelectionStyleValueForProperty(selection, "background-color", textHighlightColor));
       console.log('textType:', textType)
 
@@ -182,6 +193,10 @@ export default function ToolbarPlugin() {
         </Menu>
         <FontSizeMenu fontSize={"12"} onInputChange={(value) => console.log('value:', value)} />
         <ActionIcon style={{ }} onClick={handleFormatBold} variant="default"><IconBold /></ActionIcon>
+        <ActionIcon style={{ }} onClick={handleFormatItalic} variant="default"><IconItalic /></ActionIcon>
+        <ActionIcon style={{ }} onClick={handleFormatUnderline} variant="default"><IconUnderline /></ActionIcon>
+        <ActionIcon style={{ }} onClick={handleFormatStrikethrough} variant="default"><IconStrikethrough /></ActionIcon>
+        <ActionIcon style={{ }} onClick={handleFormatStrikethrough} variant="default"><IconTextColor /></ActionIcon>
         {/* <Menu>
           <Menu.Item>item 1</Menu.Item>
         </Menu> */}
