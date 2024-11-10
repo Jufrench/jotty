@@ -51,7 +51,7 @@ export default function ToolbarPlugin() {
   const theme = useMantineTheme();
   const [editor] = useLexicalComposerContext();
   
-  // ACTIVE STATES FOR BUTTONS
+  // BUTTONS ACTIVE/INACTIVE STATES
   // =========================
   const [textType, setTextType] = useState<string | undefined>("p");
   const [isBoldActive, setIsBoldActive] = useState<boolean>(false);
@@ -65,6 +65,10 @@ export default function ToolbarPlugin() {
   // const [opened, { close, open }] = useDisclosure(false);
   const [textAlign, setTextAlign] = useState<string>("left");
   const [/* listType */, setListType] = useState<string>("bullet");
+
+  // MENU OPEN/CLOSE STATES
+  const [isTextElOpen, setIsTextElOpen] = useState<boolean>(false);
+  const [isTextAlignOpen, setIsTextAlignOpen] = useState<boolean>(false);
 
   const toggleTextColor = () => {
     setIsTextColorPickerOpen(!isTextColorPickerOpen);
@@ -229,18 +233,14 @@ export default function ToolbarPlugin() {
     );
   }, [editor, updateToolbar])
 
-  const [isTextElOpen, setIsTextElOpen] = useState<boolean>(false);
-  const [isTextAlignOpen, setIsTextAlignOpen] = useState<boolean>(false);
-
-  // console.log(theme.colors)
-
   const activeButtonStyle = {
-    background: theme.colors.paleIndigo[7],
+    // background: theme.colors.paleIndigo[7],
+    background: theme.colors.myGreen[7],
     color: theme.white,
   };
 
   return (
-    <div style={{ border: '2px solid gray', padding: 3, background: theme.colors.paleIndigo[1] }}>
+    <div style={{ border: `2px solid ${theme.colors.myGreen[7]}`, padding: 3, background: theme.colors.myGreen[0] }}>
       {/* <Button.Group>
         <ActionIcon variant="default"><IconArrowBackUp /></ActionIcon>
         <ActionIcon variant="default"><IconArrowForwardUp /></ActionIcon>
@@ -265,7 +265,7 @@ export default function ToolbarPlugin() {
               : textElementOptions[textElementOptions.findIndex(item => item.tag === textType)]?.domElement}
             </Button>
           </Menu.Target>
-          <Menu.Dropdown style={{ background: theme.colors.paleIndigo[1] }}>
+          <Menu.Dropdown style={{ background: theme.colors.myGreen[1] }}>
             {textElementOptions.map(item => {
               return (
                 <Menu.Item key={item.label} onClick={() => formatTextElementType(item.tag)}>
@@ -297,7 +297,7 @@ export default function ToolbarPlugin() {
               <TextInput placeholder='Text' />
               <TextInput placeholder='URL' value={link === '' ? '' : link} />
               <Group justify='space-between'>
-                <ActionIcon color={theme.colors.paleIndigo[7]} style={{ flexGrow: 1 }} variant='outline'><IconX /></ActionIcon>
+                <ActionIcon color={theme.colors.myGreen[7]} style={{ flexGrow: 1 }} variant='outline'><IconX /></ActionIcon>
                 <ActionIcon
                   color={theme.colors.myGreen[6]}
                   // onClick={() => setLink()}
@@ -338,7 +338,7 @@ export default function ToolbarPlugin() {
                 : textAlignOptions[textAlignOptions.findIndex(item => item.alignment === textAlign)]?.domElement}
               </Button>
             </Menu.Target>
-          <Menu.Dropdown style={{ background: theme.colors.paleIndigo[1] }}>
+          <Menu.Dropdown style={{ background: theme.colors.myGreen[1] }}>
             {textAlignOptions.map(item => {
               return (
                 <Menu.Item key={item.alignment} onClick={() => formatTextAlign(item.alignment)}>

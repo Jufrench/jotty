@@ -10,6 +10,9 @@ import { LinkNode } from '@lexical/link';
 import { ListNode, ListItemNode } from "@lexical/list";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 
+import { Card, Group } from "@mantine/core";
+import { IconArrowBigUp } from "@tabler/icons-react";
+
 import ToolbarPlugin from "./ToolbarPlugin";
 import './styles.css';
 
@@ -51,13 +54,15 @@ export default function Editor() {
     <div style={{ padding: "0 20px", marginTop: "10%" }}>
       <LexicalComposer initialConfig={initialConfig}>
         <EditorRefPlugin editorRef={editorRef} />
+          <Card shadow="md">
         <ToolbarPlugin />
         <div style={{ padding: "5px" }}>
           <RichTextPlugin
             contentEditable={<ContentEditable className="content-editable-root" style={{ backgroundColor: '#f8f8f8' }} />}
-            placeholder={<div>Enter some text...</div>}
+            placeholder={<Group gap={1} mt={2} ><span>Enter some text</span><IconArrowBigUp /></Group>}
             ErrorBoundary={LexicalErrorBoundary} />
         </div>
+            </Card>
       </LexicalComposer>
     </div>
   );
