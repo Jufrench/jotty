@@ -13,9 +13,24 @@ const paleIndigo: MantineColorsTuple = [
   '#36437a'
 ];
 
+// #265e39
+const myGreen: MantineColorsTuple = [
+  "#f0f9f3",
+  "#e2f0e6",
+  "#bfe0ca",
+  "#9ad1ac",
+  "#7ac392",
+  "#67bb81",
+  "#5bb778",
+  "#4ba066",
+  "#418f5a",
+  "#327b4b"
+];
+
 export const theme = createTheme({
   /* Put your mantine theme override here */
   colors: {
     paleIndigo,
+    myGreen
   }
 });

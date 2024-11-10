@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { ActionIcon, Button, Divider, Group, Menu, useMantineTheme } from '@mantine/core';
+import { ActionIcon, Button, Divider, Group, Menu, Popover, Stack, TextInput, useMantineTheme } from '@mantine/core';
 import { IconArrowBackUp, IconArrowForwardUp, IconBold, IconItalic, IconH1, IconH2, IconH3,
-  IconH4, IconH5, IconH6, IconParkingCircle, IconStrikethrough, IconTextColor,
+  IconH4, IconH5, IconH6, IconParkingCircle, IconStrikethrough,
   IconTriangleInvertedFilled, IconTriangleFilled, IconUnderline, IconHighlight, IconLink,
   IconAlignLeft, IconAlignCenter, IconAlignRight, IconAlignJustified, /* IconList, IconListNumbers, */
-  IconClearFormatting } from '@tabler/icons-react';
+  IconClearFormatting, 
+  IconCheck,
+  IconX} from '@tabler/icons-react';
 
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $createParagraphNode, $getSelection, $isParagraphNode, $isRangeSelection, $isTextNode, /* $setSelection, $createTextNode, */
@@ -56,11 +58,17 @@ export default function ToolbarPlugin() {
   const [isItalicActive, setIsItalicActive] = useState<boolean>(false);
   const [isUnderlineActive, setIsUnderlineActive] = useState<boolean>(false);
   const [isStrikethroughActive, setIsStrikethroughActive] = useState<boolean>(false);
+  const [link, setLink] = useState("");
+  // const [linkInput, setLinkInput] = useState("");
   const [textColor, setTextColor] = useState<string>("");
-  const [isColorPickerOpen, setIsColorPickerOpen] = useState<boolean>(false);
+  const [isTextColorPickerOpen, setIsTextColorPickerOpen] = useState<boolean>(false);
   // const [opened, { close, open }] = useDisclosure(false);
   const [textAlign, setTextAlign] = useState<string>("left");
   const [/* listType */, setListType] = useState<string>("bullet");
+
+  const toggleTextColor = () => {
+    setIsTextColorPickerOpen(!isTextColorPickerOpen);
+  };
 
 
   // HANDLE FORMATTING OF TEXT
@@ -70,7 +78,18 @@ export default function ToolbarPlugin() {
   const handleFormatUnderline = () => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
   const handleFormatStrikethrough = () => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
   const handleAddLink = () => {
-    console.log('Add Link');
+    editor.update(() => {
+      const selection = $getSelection();
+      if ($isRangeSelection(selection)) {
+        const selectionAnchorKey = selection.anchor.getNode().__key;
+        const selectionDOMElement = editor.getElementByKey(selectionAnchorKey);
+        // selection is always a span, so we check to see if the parent is an anchor element
+        const currentLink = selectionDOMElement?.parentElement?.getAttribute("href")?.split("https://")[1] ?? "";
+        
+        setLink(currentLink);
+        // setInsertLinkAnchor(selectionDOMElement);
+      }
+    });
   };
   const handleTextColorChange = (color: any) => {
     editor.update(() => {
@@ -213,7 +232,7 @@ export default function ToolbarPlugin() {
   const [isTextElOpen, setIsTextElOpen] = useState<boolean>(false);
   const [isTextAlignOpen, setIsTextAlignOpen] = useState<boolean>(false);
 
-  console.log(theme.colors)
+  // console.log(theme.colors)
 
   const activeButtonStyle = {
     background: theme.colors.paleIndigo[7],
@@ -267,27 +286,43 @@ export default function ToolbarPlugin() {
         <ActionIcon color={theme.black} style={isItalicActive ? activeButtonStyle : {}} onClick={handleFormatItalic} variant='transparent'><IconItalic /></ActionIcon>
         <ActionIcon color={theme.black} style={isUnderlineActive ? activeButtonStyle : {}} onClick={handleFormatUnderline} variant='transparent'><IconUnderline /></ActionIcon>
         <ActionIcon color={theme.black} style={isStrikethroughActive ? activeButtonStyle : {}} onClick={handleFormatStrikethrough} variant='transparent'><IconStrikethrough /></ActionIcon>
-        <ActionIcon color={theme.black} style={{}} onClick={handleAddLink} variant='transparent'><IconLink /></ActionIcon>
+
+        {/* Add Link */}
+        <Popover>
+          <Popover.Target>
+            <ActionIcon color={theme.black} style={{}} onClick={handleAddLink} variant='transparent'><IconLink /></ActionIcon>
+          </Popover.Target>
+          <Popover.Dropdown>
+            <Stack gap={8}>
+              <TextInput placeholder='Text' />
+              <TextInput placeholder='URL' value={link === '' ? '' : link} />
+              <Group justify='space-between'>
+                <ActionIcon color={theme.colors.paleIndigo[7]} style={{ flexGrow: 1 }} variant='outline'><IconX /></ActionIcon>
+                <ActionIcon
+                  color={theme.colors.myGreen[6]}
+                  // onClick={() => setLink()}
+                  style={{ flexGrow: 2 }}><IconCheck /></ActionIcon>
+              </Group>
+            </Stack>
+          </Popover.Dropdown>
+        </Popover>
+
+        {/* Text Color */}
+        <PopoverColorPicker
+          color={textColor}
+          onChange={handleTextColorChange}
+          onClick={toggleTextColor}
+          opened={isTextColorPickerOpen} />
         <ActionIcon
           color={theme.black}
           onClick={() => {
             handleTextColorChange(textColor);
-            setIsColorPickerOpen(!isColorPickerOpen);
-          }}
-          variant='transparent'>
-            <IconTextColor />
-        </ActionIcon>
-        <PopoverColorPicker opened={isColorPickerOpen} />
-        <ActionIcon
-          color={theme.black}
-          onClick={() => {
-            handleTextColorChange(textColor);
-            setIsColorPickerOpen(!isColorPickerOpen);
+            // setIsColorPickerOpen(!isColorPickerOpen);
           }}
           variant='transparent'>
             <IconHighlight />
         </ActionIcon>
-        <PopoverColorPicker opened={isColorPickerOpen} />
+        {/* <PopoverColorPicker opened={isColorPickerOpen} /> */}
         <Divider orientation='vertical' color='#99a0ca' />
         <Menu opened={isTextAlignOpen}>
           <Menu.Target>

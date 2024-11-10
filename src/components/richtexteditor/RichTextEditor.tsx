@@ -13,7 +13,7 @@ import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import ToolbarPlugin from "./ToolbarPlugin";
 import './styles.css';
 
-const theme = {
+const editorTheme = {
   paragraph: 'editor-text-paragraph',
   // paragraph: `${{ margin: 0 }}`,
   quote: 'editor-blockquote',
@@ -34,7 +34,7 @@ export default function Editor() {
 
   const initialConfig: InitialConfigType = {
     namespace: "EditorWidgetSettings",
-    theme,
+    theme: editorTheme,
     onError: console.error,
     nodes: [
       HeadingNode,
@@ -52,9 +52,9 @@ export default function Editor() {
       <LexicalComposer initialConfig={initialConfig}>
         <EditorRefPlugin editorRef={editorRef} />
         <ToolbarPlugin />
-        <div style={{padding: "5px"}}>
+        <div style={{ padding: "5px" }}>
           <RichTextPlugin
-            contentEditable={<ContentEditable className="content-editable-root" style={{ backgroundColor: '#f8f8f8'}} />}
+            contentEditable={<ContentEditable className="content-editable-root" style={{ backgroundColor: '#f8f8f8' }} />}
             placeholder={<div>Enter some text...</div>}
             ErrorBoundary={LexicalErrorBoundary} />
         </div>

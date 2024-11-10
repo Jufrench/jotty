@@ -1,16 +1,30 @@
-import { ColorPicker, Popover } from '@mantine/core';
+import { ActionIcon, ColorPicker, Popover, useMantineTheme } from '@mantine/core';
+import { IconTextColor } from '@tabler/icons-react';
 
-export default function PopoverColorPicker(props: { opened: boolean }) {
+interface PopoverColorPickerProps {
+  color: string;
+  onChange: (color: string) => void;
+  onClick: () => void;
+  opened: boolean;
+}
+
+export default function PopoverColorPicker(props: PopoverColorPickerProps) {
+  const theme = useMantineTheme();
+
   return (
-    <Popover width={200} position="bottom" withArrow shadow="md" opened={props.opened}>
-      {/* <Popover.Target>
-        <Button>Toggle popover</Button>
-      </Popover.Target> */}
-      <Popover.Dropdown>
-        {/* <Stack style={{ justifyContent: 'center' }}> */}
-          {/* <Button>X</Button> */}
-          <ColorPicker />
-        {/* </Stack> */}
+    <Popover
+      opened={props.opened}
+      position="bottom">
+      <Popover.Target>
+        <ActionIcon
+            color={theme.black}
+            onClick={props.onClick}
+            variant='transparent'>
+            <IconTextColor />
+        </ActionIcon>
+      </Popover.Target>
+      <Popover.Dropdown style={{ background: 'none', padding: 0 }}>
+        <ColorPicker />
       </Popover.Dropdown>
     </Popover>
   );
