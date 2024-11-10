@@ -1,25 +1,25 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { ActionIcon, Button, Center, Divider, Group, Menu } from '@mantine/core';
+import { ActionIcon, Button, Divider, Group, Menu } from '@mantine/core';
 import { IconArrowBackUp, IconArrowForwardUp, IconBold, IconItalic, IconH1, IconH2, IconH3,
   IconH4, IconH5, IconH6, IconParkingCircle, IconStrikethrough, IconTextColor,
   IconTriangleInvertedFilled, IconTriangleFilled, IconUnderline, IconHighlight, IconLink,
-  IconAlignLeft, IconAlignCenter, IconAlignRight, IconAlignJustified, IconList, IconListNumbers,
+  IconAlignLeft, IconAlignCenter, IconAlignRight, IconAlignJustified, /* IconList, IconListNumbers, */
   IconClearFormatting } from '@tabler/icons-react';
 
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { $createParagraphNode, $getSelection, $isParagraphNode, $isRangeSelection, $isTextNode, $setSelection, $createTextNode,
+import { $createParagraphNode, $getSelection, $isParagraphNode, $isRangeSelection, $isTextNode, /* $setSelection, $createTextNode, */
   CAN_REDO_COMMAND, CAN_UNDO_COMMAND, CommandListenerPriority, ElementFormatType, LexicalNode,
-  FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, INDENT_CONTENT_COMMAND, OUTDENT_CONTENT_COMMAND,
-  REDO_COMMAND, UNDO_COMMAND } from "lexical";
+  FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, /*INDENT_CONTENT_COMMAND, OUTDENT_CONTENT_COMMAND,
+  REDO_COMMAND, UNDO_COMMAND */ } from "lexical";
 import { mergeRegister, $getNearestBlockElementAncestorOrThrow, $getNearestNodeOfType } from "@lexical/utils";
-import { $createHeadingNode, $isHeadingNode, HeadingNode, HeadingTagType, $createQuoteNode } from "@lexical/rich-text";
+import { $createHeadingNode, $isHeadingNode, HeadingNode, HeadingTagType, /* $createQuoteNode */ } from "@lexical/rich-text";
 import { $setBlocksType, $getSelectionStyleValueForProperty, $patchStyleText } from "@lexical/selection";
-import { $isListItemNode, ListType, ListNode, INSERT_UNORDERED_LIST_COMMAND, INSERT_ORDERED_LIST_COMMAND, INSERT_CHECK_LIST_COMMAND } from "@lexical/list";
+import { $isListItemNode, /* ListType, */ ListNode, /* INSERT_UNORDERED_LIST_COMMAND,
+  INSERT_ORDERED_LIST_COMMAND, INSERT_CHECK_LIST_COMMAND */ } from "@lexical/list";
 
 import FontSizeMenu from './FontSizeMenu';
 import PopoverColorPicker from './PopoverColorPicker';
-import { useDisclosure } from '@mantine/hooks';
 
 const LowPriority: CommandListenerPriority = 1;
 
@@ -40,11 +40,10 @@ const textAlignOptions = [
   { alignment: "justify", domElement: <IconAlignJustified /> },
 ];
 
-const listTypeOptions = [
-  { type: "bullet", domElement: <IconList /> },
-  { type: "number", domElement: <IconListNumbers /> },
-  // { type: "check", domElement: <CheckBoxOutlineBlankRounded /> },
-];
+// const listTypeOptions = [
+//   { type: "bullet", domElement: <IconList /> },
+//   { type: "number", domElement: <IconListNumbers /> },
+// ];
 
 export default function ToolbarPlugin() {
   const [editor] = useLexicalComposerContext();
@@ -52,15 +51,15 @@ export default function ToolbarPlugin() {
   // ACTIVE STATES FOR BUTTONS
   // =========================
   const [textType, setTextType] = useState<string | undefined>("p");
-  const [isBoldActive, setIsBoldActive] = useState<boolean>(false);
-  const [isItalicActive, setIsItalicActive] = useState<boolean>(false);
-  const [isUnderlineActive, setIsUnderlineActive] = useState<boolean>(false);
-  const [isStrikethroughActive, setIsStrikethroughActive] = useState<boolean>(false);
+  const [/* isBoldActive */, setIsBoldActive] = useState<boolean>(false);
+  const [/* isItalicActive */, setIsItalicActive] = useState<boolean>(false);
+  const [/* isUnderlineActive */, setIsUnderlineActive] = useState<boolean>(false);
+  const [/* isStrikethroughActive */, setIsStrikethroughActive] = useState<boolean>(false);
   const [textColor, setTextColor] = useState<string>("");
   const [isColorPickerOpen, setIsColorPickerOpen] = useState<boolean>(false);
   // const [opened, { close, open }] = useDisclosure(false);
   const [textAlign, setTextAlign] = useState<string>("left");
-  const [listType, setListType] = useState<string>("bullet");
+  const [/* listType */, setListType] = useState<string>("bullet");
 
 
   // HANDLE FORMATTING OF TEXT
@@ -69,6 +68,9 @@ export default function ToolbarPlugin() {
   const handleFormatItalic = () => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
   const handleFormatUnderline = () => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
   const handleFormatStrikethrough = () => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
+  const handleAddLink = () => {
+    console.log('Add Link');
+  };
   const handleTextColorChange = (color: any) => {
     editor.update(() => {
       const selection = $getSelection();
@@ -200,8 +202,10 @@ export default function ToolbarPlugin() {
           updateToolbar();
         })
       }),
-      editor.registerCommand(CAN_UNDO_COMMAND, payload => false, LowPriority),
-      editor.registerCommand(CAN_REDO_COMMAND, payload => false, LowPriority),
+      // editor.registerCommand(CAN_UNDO_COMMAND, payload => false, LowPriority),
+      // editor.registerCommand(CAN_REDO_COMMAND, payload => false, LowPriority),
+      editor.registerCommand(CAN_UNDO_COMMAND, () => false, LowPriority),
+      editor.registerCommand(CAN_REDO_COMMAND, () => false, LowPriority),
     );
   }, [editor, updateToolbar])
 
@@ -246,7 +250,7 @@ export default function ToolbarPlugin() {
             })}
           </Menu.Dropdown>
         </Menu>
-        
+
         {/* Font Size Menu Selection */}
         <FontSizeMenu fontSize={"12"} onInputChange={(value) => console.log('value:', value)} />
         <Divider orientation='vertical' color='#99a0ca' ml={4} />
@@ -254,6 +258,7 @@ export default function ToolbarPlugin() {
         <ActionIcon style={{ }} onClick={handleFormatItalic} variant='transparent'><IconItalic /></ActionIcon>
         <ActionIcon style={{ }} onClick={handleFormatUnderline} variant='transparent'><IconUnderline /></ActionIcon>
         <ActionIcon style={{ }} onClick={handleFormatStrikethrough} variant='transparent'><IconStrikethrough /></ActionIcon>
+        <ActionIcon style={{ }} onClick={handleAddLink} variant='transparent'><IconLink /></ActionIcon>
         <ActionIcon
           onClick={() => {
             handleTextColorChange(textColor);

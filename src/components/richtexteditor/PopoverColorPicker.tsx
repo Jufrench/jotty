@@ -1,4 +1,4 @@
-import { ColorPicker, Popover, Text, Button, Group, Stack } from '@mantine/core';
+import { ColorPicker, Popover } from '@mantine/core';
 
 export default function PopoverColorPicker(props: { opened: boolean }) {
   return (

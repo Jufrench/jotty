@@ -1,4 +1,4 @@
-import { Accordion, List, Title } from "@mantine/core";
+import { Accordion, List } from "@mantine/core";
 
 export default function RoadMap() {
   const roadMapList = [

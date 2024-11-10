@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
-import { Button, Input, Menu, TextInput } from '@mantine/core';
-import { IconChevronDown } from '@tabler/icons-react';
+import { Menu, TextInput } from '@mantine/core';
 
 interface FontSizeMenuProps {
   fontSize: string | null;
@@ -19,7 +18,7 @@ const fontSizeOptions: Array<string> = [
 
 export default function FontSizeMenu(props: FontSizeMenuProps) {
   const [opened, setOpened] = useState(false);
-  const [value, setValue] = useState('');
+  const [/* value */, setValue] = useState('');
 
   return (
     <Menu opened={opened} onChange={setOpened} trapFocus={false}>
