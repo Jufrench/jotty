@@ -10,3 +10,19 @@
 .editor-text-paragraph {
   margin: 0;
 }
+
+.editor-text-italic {
+  font-style: italic;
+}
+
+.editor-text-underline {
+  text-decoration: underline;
+}
+
+.editor-text-strikethrough {
+  text-decoration: line-through;
+}
+
+.editor-text-underline.editor-text-strikethrough {
+  text-decoration: underline line-through;
+}

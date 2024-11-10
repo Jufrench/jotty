@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { ActionIcon, Button, Divider, Group, Menu } from '@mantine/core';
+import { ActionIcon, Button, Divider, Group, Menu, useMantineTheme } from '@mantine/core';
 import { IconArrowBackUp, IconArrowForwardUp, IconBold, IconItalic, IconH1, IconH2, IconH3,
   IconH4, IconH5, IconH6, IconParkingCircle, IconStrikethrough, IconTextColor,
   IconTriangleInvertedFilled, IconTriangleFilled, IconUnderline, IconHighlight, IconLink,
@@ -46,15 +46,16 @@ const textAlignOptions = [
 // ];
 
 export default function ToolbarPlugin() {
+  const theme = useMantineTheme();
   const [editor] = useLexicalComposerContext();
   
   // ACTIVE STATES FOR BUTTONS
   // =========================
   const [textType, setTextType] = useState<string | undefined>("p");
-  const [/* isBoldActive */, setIsBoldActive] = useState<boolean>(false);
-  const [/* isItalicActive */, setIsItalicActive] = useState<boolean>(false);
-  const [/* isUnderlineActive */, setIsUnderlineActive] = useState<boolean>(false);
-  const [/* isStrikethroughActive */, setIsStrikethroughActive] = useState<boolean>(false);
+  const [isBoldActive, setIsBoldActive] = useState<boolean>(false);
+  const [isItalicActive, setIsItalicActive] = useState<boolean>(false);
+  const [isUnderlineActive, setIsUnderlineActive] = useState<boolean>(false);
+  const [isStrikethroughActive, setIsStrikethroughActive] = useState<boolean>(false);
   const [textColor, setTextColor] = useState<string>("");
   const [isColorPickerOpen, setIsColorPickerOpen] = useState<boolean>(false);
   // const [opened, { close, open }] = useDisclosure(false);
@@ -212,21 +213,29 @@ export default function ToolbarPlugin() {
   const [isTextElOpen, setIsTextElOpen] = useState<boolean>(false);
   const [isTextAlignOpen, setIsTextAlignOpen] = useState<boolean>(false);
 
+  console.log(theme.colors)
+
+  const activeButtonStyle = {
+    background: theme.colors.paleIndigo[7],
+    color: theme.white,
+  };
+
   return (
-    <div style={{ border: '2px solid gray', padding: 3, background: '#dfe2f2' }}>
+    <div style={{ border: '2px solid gray', padding: 3, background: theme.colors.paleIndigo[1] }}>
       {/* <Button.Group>
         <ActionIcon variant="default"><IconArrowBackUp /></ActionIcon>
         <ActionIcon variant="default"><IconArrowForwardUp /></ActionIcon>
       </Button.Group> */}
       <Group gap={2}>
-        <ActionIcon variant='transparent'><IconArrowBackUp /></ActionIcon>
-        <ActionIcon variant='transparent'><IconArrowForwardUp /></ActionIcon>
+        <ActionIcon color={theme.black} variant='transparent'><IconArrowBackUp /></ActionIcon>
+        <ActionIcon color={theme.black} variant='transparent'><IconArrowForwardUp /></ActionIcon>
         <Divider orientation='vertical' color='#99a0ca' />
 
         {/* Text Element Menu Selection */}
         <Menu opened={isTextElOpen}>
           <Menu.Target>
             <Button
+              color={theme.black}
               onClick={() => setIsTextElOpen(!isTextElOpen)}
               rightSection={isTextElOpen ? <IconTriangleFilled size={8} /> : <IconTriangleInvertedFilled size={8} />}
               size='xs'
@@ -237,7 +246,7 @@ export default function ToolbarPlugin() {
               : textElementOptions[textElementOptions.findIndex(item => item.tag === textType)]?.domElement}
             </Button>
           </Menu.Target>
-          <Menu.Dropdown>
+          <Menu.Dropdown style={{ background: theme.colors.paleIndigo[1] }}>
             {textElementOptions.map(item => {
               return (
                 <Menu.Item key={item.label} onClick={() => formatTextElementType(item.tag)}>
@@ -254,12 +263,13 @@ export default function ToolbarPlugin() {
         {/* Font Size Menu Selection */}
         <FontSizeMenu fontSize={"12"} onInputChange={(value) => console.log('value:', value)} />
         <Divider orientation='vertical' color='#99a0ca' ml={4} />
-        <ActionIcon style={{ }} onClick={handleFormatBold} variant='transparent'><IconBold /></ActionIcon>
-        <ActionIcon style={{ }} onClick={handleFormatItalic} variant='transparent'><IconItalic /></ActionIcon>
-        <ActionIcon style={{ }} onClick={handleFormatUnderline} variant='transparent'><IconUnderline /></ActionIcon>
-        <ActionIcon style={{ }} onClick={handleFormatStrikethrough} variant='transparent'><IconStrikethrough /></ActionIcon>
-        <ActionIcon style={{ }} onClick={handleAddLink} variant='transparent'><IconLink /></ActionIcon>
+        <ActionIcon color={theme.black} style={isBoldActive ? activeButtonStyle : {}} onClick={handleFormatBold} variant='transparent'><IconBold /></ActionIcon>
+        <ActionIcon color={theme.black} style={isItalicActive ? activeButtonStyle : {}} onClick={handleFormatItalic} variant='transparent'><IconItalic /></ActionIcon>
+        <ActionIcon color={theme.black} style={isUnderlineActive ? activeButtonStyle : {}} onClick={handleFormatUnderline} variant='transparent'><IconUnderline /></ActionIcon>
+        <ActionIcon color={theme.black} style={isStrikethroughActive ? activeButtonStyle : {}} onClick={handleFormatStrikethrough} variant='transparent'><IconStrikethrough /></ActionIcon>
+        <ActionIcon color={theme.black} style={{}} onClick={handleAddLink} variant='transparent'><IconLink /></ActionIcon>
         <ActionIcon
+          color={theme.black}
           onClick={() => {
             handleTextColorChange(textColor);
             setIsColorPickerOpen(!isColorPickerOpen);
@@ -269,6 +279,7 @@ export default function ToolbarPlugin() {
         </ActionIcon>
         <PopoverColorPicker opened={isColorPickerOpen} />
         <ActionIcon
+          color={theme.black}
           onClick={() => {
             handleTextColorChange(textColor);
             setIsColorPickerOpen(!isColorPickerOpen);
@@ -281,6 +292,7 @@ export default function ToolbarPlugin() {
         <Menu opened={isTextAlignOpen}>
           <Menu.Target>
               <Button
+                color={theme.black}
                 onClick={() => setIsTextAlignOpen(!isTextAlignOpen)}
                 rightSection={isTextAlignOpen ? <IconTriangleFilled size={8} /> : <IconTriangleInvertedFilled size={8} />}
                 size='xs'
@@ -291,7 +303,7 @@ export default function ToolbarPlugin() {
                 : textAlignOptions[textAlignOptions.findIndex(item => item.alignment === textAlign)]?.domElement}
               </Button>
             </Menu.Target>
-          <Menu.Dropdown>
+          <Menu.Dropdown style={{ background: theme.colors.paleIndigo[1] }}>
             {textAlignOptions.map(item => {
               return (
                 <Menu.Item key={item.alignment} onClick={() => formatTextAlign(item.alignment)}>
@@ -305,7 +317,7 @@ export default function ToolbarPlugin() {
           </Menu.Dropdown>
         </Menu>
         <Divider orientation='vertical' color='#99a0ca' />
-        <ActionIcon style={{ }} onClick={handleClearFormat} variant='transparent'><IconClearFormatting /></ActionIcon>
+        <ActionIcon color={theme.black} style={{ }} onClick={handleClearFormat} variant='transparent'><IconClearFormatting /></ActionIcon>
         {/* <Menu>
           <Menu.Item>item 1</Menu.Item>
         </Menu> */}

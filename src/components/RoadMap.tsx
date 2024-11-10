@@ -20,7 +20,7 @@ export default function RoadMap() {
           <List>
           {roadMapList.map(item => {
             return (
-              <List.Item>{item}</List.Item>
+              <List.Item key={item}>{item}</List.Item>
             )
           })}
           </List>
