@@ -10,8 +10,8 @@ import { LinkNode } from '@lexical/link';
 import { ListNode, ListItemNode } from "@lexical/list";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 
-import { Card, Group } from "@mantine/core";
-import { IconArrowBigUp } from "@tabler/icons-react";
+import { Alert, Card, Group, Stack } from "@mantine/core";
+import { IconAlertTriangleFilled, IconArrowBigUp } from "@tabler/icons-react";
 
 import ToolbarPlugin from "./ToolbarPlugin";
 import './styles.css';
@@ -50,19 +50,20 @@ export default function Editor() {
   };
 
   return (
-    // <div style={{ width: "90%", marginTop: "10%" }}>
     <div style={{ padding: "0 20px", marginTop: "10%" }}>
       <LexicalComposer initialConfig={initialConfig}>
         <EditorRefPlugin editorRef={editorRef} />
-          <Card shadow="md">
-        <ToolbarPlugin />
-        <div style={{ padding: "5px" }}>
-          <RichTextPlugin
-            contentEditable={<ContentEditable className="content-editable-root" style={{ backgroundColor: '#f8f8f8' }} />}
-            placeholder={<Group gap={1} mt={2} ><span>Enter some text</span><IconArrowBigUp /></Group>}
-            ErrorBoundary={LexicalErrorBoundary} />
-        </div>
-            </Card>
+        <Alert color="yellow" icon={<IconAlertTriangleFilled />} mb={10}
+          title="App under construction - some features may not yet be fully functional." />
+        <Card shadow="md">
+          <Stack gap={10}>
+            <ToolbarPlugin />
+            <RichTextPlugin
+              contentEditable={<ContentEditable className="content-editable-root" style={{ backgroundColor: '#f8f8f8' }} />}
+              placeholder={<Group gap={1} mt={2} ><span>Enter some text</span><IconArrowBigUp /></Group>}
+              ErrorBoundary={LexicalErrorBoundary} />
+          </Stack>
+        </Card>
       </LexicalComposer>
     </div>
   );

@@ -8,8 +8,8 @@ export default function App() {
   return (
     <MantineProvider theme={theme}>
       <Container>
-        <RichTextEditor />
         <RoadMap />
+        <RichTextEditor />
       </Container>
     </MantineProvider>
   );

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 
 import { ActionIcon, Button, Divider, Group, Menu, Popover, Stack, TextInput, useMantineTheme } from '@mantine/core';
 import { IconArrowBackUp, IconArrowForwardUp, IconBold, IconItalic, IconH1, IconH2, IconH3,
@@ -10,7 +10,7 @@ import { IconArrowBackUp, IconArrowForwardUp, IconBold, IconItalic, IconH1, Icon
   IconX} from '@tabler/icons-react';
 
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { $createParagraphNode, $getSelection, $isParagraphNode, $isRangeSelection, $isTextNode, /* $setSelection, $createTextNode, */
+import { $createParagraphNode, $getSelection, $isParagraphNode, $isRangeSelection, $isTextNode, $createTextNode, /* $setSelection, */
   CAN_REDO_COMMAND, CAN_UNDO_COMMAND, CommandListenerPriority, ElementFormatType, LexicalNode,
   FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, /*INDENT_CONTENT_COMMAND, OUTDENT_CONTENT_COMMAND,
   REDO_COMMAND, UNDO_COMMAND */ } from "lexical";
@@ -19,6 +19,7 @@ import { $createHeadingNode, $isHeadingNode, HeadingNode, HeadingTagType, /* $cr
 import { $setBlocksType, $getSelectionStyleValueForProperty, $patchStyleText } from "@lexical/selection";
 import { $isListItemNode, /* ListType, */ ListNode, /* INSERT_UNORDERED_LIST_COMMAND,
   INSERT_ORDERED_LIST_COMMAND, INSERT_CHECK_LIST_COMMAND */ } from "@lexical/list";
+import { $createLinkNode } from '@lexical/link';
 
 import FontSizeMenu from './FontSizeMenu';
 import PopoverColorPicker from './PopoverColorPicker';
@@ -58,8 +59,8 @@ export default function ToolbarPlugin() {
   const [isItalicActive, setIsItalicActive] = useState<boolean>(false);
   const [isUnderlineActive, setIsUnderlineActive] = useState<boolean>(false);
   const [isStrikethroughActive, setIsStrikethroughActive] = useState<boolean>(false);
-  const [link, setLink] = useState("");
-  // const [linkInput, setLinkInput] = useState("");
+  const [urlLinkInput, setUrlLinkInput] = useState("");
+  const [urlLink, setUrlLink] = useState("");
   const [textColor, setTextColor] = useState<string>("");
   const [isTextColorPickerOpen, setIsTextColorPickerOpen] = useState<boolean>(false);
   // const [opened, { close, open }] = useDisclosure(false);
@@ -81,20 +82,56 @@ export default function ToolbarPlugin() {
   const handleFormatItalic = () => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
   const handleFormatUnderline = () => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
   const handleFormatStrikethrough = () => editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
+
   const handleAddLink = () => {
     editor.update(() => {
       const selection = $getSelection();
+      // console.log('currentLink:', currentLink)
+      console.log('content:', selection?.getTextContent())
       if ($isRangeSelection(selection)) {
         const selectionAnchorKey = selection.anchor.getNode().__key;
+        // console.log('%chandleAddLink - selection', 'color:goldenrod', selection)
         const selectionDOMElement = editor.getElementByKey(selectionAnchorKey);
         // selection is always a span, so we check to see if the parent is an anchor element
         const currentLink = selectionDOMElement?.parentElement?.getAttribute("href")?.split("https://")[1] ?? "";
-        
-        setLink(currentLink);
+        console.group('%c    ', 'background:goldenrod')
+        console.log('selectionAnchorKey', selectionAnchorKey)
+        console.log('selectionDOMElement', selectionDOMElement)
+        console.log('selectionDOMElement.parentElement', selectionDOMElement?.parentElement)
+        console.groupEnd()
+        setUrlLink(currentLink);
         // setInsertLinkAnchor(selectionDOMElement);
       }
     });
   };
+
+  const handleSaveInsertLink = () => {
+    editor.update(() => {
+      const selection = $getSelection();
+
+      console.group('%c    ', 'background:tomato')
+      console.log('selection:', selection)
+      console.log('selection?.getTextContent():', selection?.getTextContent())
+      // console.log('urlLink.length > 0:', urlLink.length > 0)
+      console.log('urlLink:', urlLink)
+      console.groupEnd()
+      
+      if ($isRangeSelection(selection) && urlLinkInput.length > 0) {          
+        console.log('%chandleSaveInsertLink - selection', 'color:tomato', selection)
+        const linkText = selection?.getTextContent().length > 0 ?
+          selection?.getTextContent() : `https://${urlLinkInput}`;
+
+        const linkNode = $createLinkNode(`https://${urlLinkInput}`,
+          {rel: "noopener noreferrer", target: "_blank", title: ""}
+        ).append($createTextNode(linkText));
+
+        selection.insertNodes([linkNode]);
+        console.log('yo!', linkNode)
+      }
+    });
+    // setInsertLinkAnchor(null);
+  };
+
   const handleTextColorChange = (color: any) => {
     editor.update(() => {
       const selection = $getSelection();
@@ -168,7 +205,6 @@ export default function ToolbarPlugin() {
       setTextColor($getSelectionStyleValueForProperty(selection, "color", textColor));
       // setFontSize($getSelectionStyleValueForProperty(selection, "font-size", `${theme.typography.body1.fontSize}`).replace("px", ""));
       // setTextHighlightColor($getSelectionStyleValueForProperty(selection, "background-color", textHighlightColor));
-      console.log('textType:', textType)
 
       // Checking if parent of selected node exists to handle update button icon displayed
       // This is relevant to block level elements & their display/styling
@@ -287,26 +323,6 @@ export default function ToolbarPlugin() {
         <ActionIcon color={theme.black} style={isUnderlineActive ? activeButtonStyle : {}} onClick={handleFormatUnderline} variant='transparent'><IconUnderline /></ActionIcon>
         <ActionIcon color={theme.black} style={isStrikethroughActive ? activeButtonStyle : {}} onClick={handleFormatStrikethrough} variant='transparent'><IconStrikethrough /></ActionIcon>
 
-        {/* Add Link */}
-        <Popover>
-          <Popover.Target>
-            <ActionIcon color={theme.black} style={{}} onClick={handleAddLink} variant='transparent'><IconLink /></ActionIcon>
-          </Popover.Target>
-          <Popover.Dropdown>
-            <Stack gap={8}>
-              <TextInput placeholder='Text' />
-              <TextInput placeholder='URL' value={link === '' ? '' : link} />
-              <Group justify='space-between'>
-                <ActionIcon color={theme.colors.myGreen[7]} style={{ flexGrow: 1 }} variant='outline'><IconX /></ActionIcon>
-                <ActionIcon
-                  color={theme.colors.myGreen[6]}
-                  // onClick={() => setLink()}
-                  style={{ flexGrow: 2 }}><IconCheck /></ActionIcon>
-              </Group>
-            </Stack>
-          </Popover.Dropdown>
-        </Popover>
-
         {/* Text Color */}
         <PopoverColorPicker
           color={textColor}
@@ -351,11 +367,41 @@ export default function ToolbarPlugin() {
             })}
           </Menu.Dropdown>
         </Menu>
+
+        {/* Add Link */}
+        <Popover>
+          <Popover.Target>
+            <ActionIcon
+              color={theme.black}
+              onClick={handleAddLink}
+              variant='transparent'>
+              <IconLink />
+            </ActionIcon>
+          </Popover.Target>
+          <Popover.Dropdown>
+            <Stack gap={8}>
+              {/* <TextInput placeholder='Text' /> */}
+              <TextInput
+                onChange={(event: ChangeEvent<HTMLInputElement>) => setUrlLinkInput(event?.target.value)}
+                placeholder='URL'
+                // value={link === '' ? '' : link}
+                value={undefined}
+                />
+              <Group justify='space-between'>
+                <ActionIcon color="indianred" style={{ flexGrow: 1 }} variant='outline'><IconX /></ActionIcon>
+                <ActionIcon
+                  color={theme.colors.myGreen[6]}
+                  onClick={handleSaveInsertLink}
+                  style={{ flexGrow: 2 }}>
+                    <IconCheck />
+                </ActionIcon>
+              </Group>
+            </Stack>
+          </Popover.Dropdown>
+        </Popover>
+        
         <Divider orientation='vertical' color='#99a0ca' />
         <ActionIcon color={theme.black} style={{ }} onClick={handleClearFormat} variant='transparent'><IconClearFormatting /></ActionIcon>
-        {/* <Menu>
-          <Menu.Item>item 1</Menu.Item>
-        </Menu> */}
       </Group>
     </div>
   )
