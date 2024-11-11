@@ -5,12 +5,8 @@ import { IconArrowBackUp, IconArrowForwardUp, IconBold, IconItalic, IconH1, Icon
   IconH4, IconH5, IconH6, IconParkingCircle, IconStrikethrough,
   IconTriangleInvertedFilled, IconTriangleFilled, IconUnderline, IconHighlight, IconLink,
   IconAlignLeft, IconAlignCenter, IconAlignRight, IconAlignJustified, /* IconList, IconListNumbers, */
-  IconClearFormatting, 
-  IconCheck,
-  IconX,
-  IconLetterCaseUpper,
-  IconLetterCaseLower,
-  IconLetterCase} from '@tabler/icons-react';
+  IconClearFormatting, IconCheck, IconX, IconLetterCaseUpper, IconLetterCaseLower,
+  IconLetterCase } from '@tabler/icons-react';
 
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $createParagraphNode, $getSelection, $isParagraphNode, $isRangeSelection, $isTextNode, $createTextNode, /* $setSelection, */
@@ -74,7 +70,7 @@ export default function ToolbarPlugin() {
   const [isTextColorPickerOpen, setIsTextColorPickerOpen] = useState<boolean>(false);
   // const [opened, { close, open }] = useDisclosure(false);
   const [textAlign, setTextAlign] = useState<string>("left");
-  const [textCase, setTextCase] = useState<string>("left");
+  const [textCase, setTextCase] = useState<string>("uppercase");
   const [/* listType */, setListType] = useState<string>("bullet");
 
   // MENU OPEN/CLOSE STATES
@@ -175,8 +171,34 @@ export default function ToolbarPlugin() {
     editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, identifier as ElementFormatType);
   };
 
-  const formatTextCase = (caseValue: string) => {
-    console.log('formatTextCase!', caseValue);
+  const formatTextCase = (caseType: string) => {
+    editor.update(() => {
+      const selection = $getSelection();
+
+      if ($isRangeSelection(selection)) {
+        // Considered going this route, but more code than necessary
+        // selectedNodes.forEach(node => {
+        //   if ($isTextNode(node)) {
+        //     console.log('node:', node)
+        //     node.setTextContent('hey');
+        //   }
+        // });
+
+        if (caseType === 'uppercase') {
+          selection.insertText(selection.getTextContent().toUpperCase());
+        }
+        if (caseType === 'lowercase') {
+          selection.insertText(selection.getTextContent().toLowerCase());
+        }
+        if (caseType === 'capitalize') {
+          let textContent = selection.getTextContent();
+          const capitalizedText = textContent.charAt(0).toUpperCase() + textContent.slice(1).toLowerCase();
+          selection.insertText(capitalizedText);
+        }
+
+        setTextCase(caseType);
+      }
+    });
   };
 
   const handleClearFormat = () => {
@@ -385,13 +407,17 @@ export default function ToolbarPlugin() {
         {/* Text Case */}
         <Menu>
           <Menu.Target>
-            <Button>
+            <Button
+              color={theme.black}
+              rightSection={isTextElOpen ? <IconTriangleFilled size={8} /> : <IconTriangleInvertedFilled size={8} />}
+              size='xs'
+              variant='transparent'>
               {textCase === ""
                 ? textCaseOptions[0].domElement
                 : textCaseOptions[textCaseOptions.findIndex(item => item.case === textCase)]?.domElement}
             </Button>
           </Menu.Target>
-          <Menu.Dropdown>
+          <Menu.Dropdown style={{ background: theme.colors.myGreen[1] }}>
             {textCaseOptions.map(item => {
                 return (
                   <Menu.Item key={item.case} onClick={() => formatTextCase(item.case)}>
