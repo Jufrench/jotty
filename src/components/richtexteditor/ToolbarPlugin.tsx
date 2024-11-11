@@ -7,7 +7,10 @@ import { IconArrowBackUp, IconArrowForwardUp, IconBold, IconItalic, IconH1, Icon
   IconAlignLeft, IconAlignCenter, IconAlignRight, IconAlignJustified, /* IconList, IconListNumbers, */
   IconClearFormatting, 
   IconCheck,
-  IconX} from '@tabler/icons-react';
+  IconX,
+  IconLetterCaseUpper,
+  IconLetterCaseLower,
+  IconLetterCase} from '@tabler/icons-react';
 
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $createParagraphNode, $getSelection, $isParagraphNode, $isRangeSelection, $isTextNode, $createTextNode, /* $setSelection, */
@@ -43,6 +46,12 @@ const textAlignOptions = [
   { alignment: "justify", domElement: <IconAlignJustified /> },
 ];
 
+const textCaseOptions = [
+  { case: "uppercase", domElement: <IconLetterCaseUpper /> },
+  { case: "lowercase", domElement: <IconLetterCaseLower /> },
+  { case: "capitalize", domElement: <IconLetterCase /> },
+];
+
 // const listTypeOptions = [
 //   { type: "bullet", domElement: <IconList /> },
 //   { type: "number", domElement: <IconListNumbers /> },
@@ -65,6 +74,7 @@ export default function ToolbarPlugin() {
   const [isTextColorPickerOpen, setIsTextColorPickerOpen] = useState<boolean>(false);
   // const [opened, { close, open }] = useDisclosure(false);
   const [textAlign, setTextAlign] = useState<string>("left");
+  const [textCase, setTextCase] = useState<string>("left");
   const [/* listType */, setListType] = useState<string>("bullet");
 
   // MENU OPEN/CLOSE STATES
@@ -163,6 +173,10 @@ export default function ToolbarPlugin() {
 
   const formatTextAlign = (identifier: string | ElementFormatType) => {
     editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, identifier as ElementFormatType);
+  };
+
+  const formatTextCase = (caseValue: string) => {
+    console.log('formatTextCase!', caseValue);
   };
 
   const handleClearFormat = () => {
@@ -359,12 +373,35 @@ export default function ToolbarPlugin() {
               return (
                 <Menu.Item key={item.alignment} onClick={() => formatTextAlign(item.alignment)}>
                   <Group>
-                    <>{item.domElement}</>
+                    {item.domElement}
                     <span>{item.alignment}</span>
                   </Group>
                 </Menu.Item>
               );
             })}
+          </Menu.Dropdown>
+        </Menu>
+
+        {/* Text Case */}
+        <Menu>
+          <Menu.Target>
+            <Button>
+              {textCase === ""
+                ? textCaseOptions[0].domElement
+                : textCaseOptions[textCaseOptions.findIndex(item => item.case === textCase)]?.domElement}
+            </Button>
+          </Menu.Target>
+          <Menu.Dropdown>
+            {textCaseOptions.map(item => {
+                return (
+                  <Menu.Item key={item.case} onClick={() => formatTextCase(item.case)}>
+                    <Group>
+                      {item.domElement}
+                      <span>{item.case}</span>
+                    </Group>
+                  </Menu.Item>
+                );
+              })}
           </Menu.Dropdown>
         </Menu>
 
