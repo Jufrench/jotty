@@ -59,7 +59,7 @@ export default function Editor() {
           <Stack gap={10}>
             <ToolbarPlugin />
             <RichTextPlugin
-              contentEditable={<ContentEditable className="content-editable-root" style={{ backgroundColor: '#f8f8f8' }} />}
+              contentEditable={<ContentEditable className="content-editable-root" style={{ backgroundColor: "#f8f8f8" }} />}
               placeholder={<Group gap={1} mt={2} ><span>Enter some text</span><IconArrowBigUp /></Group>}
               ErrorBoundary={LexicalErrorBoundary} />
           </Stack>
