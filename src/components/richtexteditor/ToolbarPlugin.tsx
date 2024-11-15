@@ -11,7 +11,7 @@ import { IconArrowBackUp, IconArrowForwardUp, IconBold, IconItalic, IconH1, Icon
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $createParagraphNode, $getSelection, $isParagraphNode, $isRangeSelection, $isTextNode, $createTextNode, /* $setSelection, */
   CAN_REDO_COMMAND, CAN_UNDO_COMMAND, CommandListenerPriority, ElementFormatType, LexicalNode,
-  FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, /*INDENT_CONTENT_COMMAND, OUTDENT_CONTENT_COMMAND,
+  FORMAT_ELEMENT_COMMAND, FORMAT_TEXT_COMMAND, /* INDENT_CONTENT_COMMAND, OUTDENT_CONTENT_COMMAND,
   REDO_COMMAND, UNDO_COMMAND */ } from "lexical";
 import { mergeRegister, $getNearestBlockElementAncestorOrThrow, $getNearestNodeOfType } from "@lexical/utils";
 import { $createHeadingNode, $isHeadingNode, HeadingNode, HeadingTagType, /* $createQuoteNode */ } from "@lexical/rich-text";
@@ -92,21 +92,13 @@ export default function ToolbarPlugin() {
   const handleAddLink = () => {
     editor.update(() => {
       const selection = $getSelection();
-      // console.log('currentLink:', currentLink)
-      console.log('content:', selection?.getTextContent())
+
       if ($isRangeSelection(selection)) {
         const selectionAnchorKey = selection.anchor.getNode().__key;
-        // console.log('%chandleAddLink - selection', 'color:goldenrod', selection)
         const selectionDOMElement = editor.getElementByKey(selectionAnchorKey);
         // selection is always a span, so we check to see if the parent is an anchor element
         const currentLink = selectionDOMElement?.parentElement?.getAttribute("href")?.split("https://")[1] ?? "";
-        console.group('%c    ', 'background:goldenrod')
-        console.log('selectionAnchorKey', selectionAnchorKey)
-        console.log('selectionDOMElement', selectionDOMElement)
-        console.log('selectionDOMElement.parentElement', selectionDOMElement?.parentElement)
-        console.groupEnd()
         setUrlLink(currentLink);
-        // setInsertLinkAnchor(selectionDOMElement);
       }
     });
   };
@@ -114,19 +106,11 @@ export default function ToolbarPlugin() {
   const handleSaveInsertLink = () => {
     editor.update(() => {
       const selection = $getSelection();
-
-      console.group('%c    ', 'background:tomato')
-      console.log('selection:', selection)
-      console.log('selection?.getTextContent():', selection?.getTextContent())
-      // console.log('urlLink.length > 0:', urlLink.length > 0)
-      console.log('urlLink:', urlLink)
-      console.groupEnd()
       
       if ($isRangeSelection(selection) && urlLinkInput.length > 0) {          
         console.log('%chandleSaveInsertLink - selection', 'color:tomato', selection)
         const linkText = selection?.getTextContent().length > 0 ?
           selection?.getTextContent() : `https://${urlLinkInput}`;
-
         const linkNode = $createLinkNode(`https://${urlLinkInput}`,
           {rel: "noopener noreferrer", target: "_blank", title: ""}
         ).append($createTextNode(linkText));
@@ -135,7 +119,6 @@ export default function ToolbarPlugin() {
         console.log('yo!', linkNode)
       }
     });
-    // setInsertLinkAnchor(null);
   };
 
   const handleTextColorChange = (color: any) => {
@@ -298,25 +281,18 @@ export default function ToolbarPlugin() {
           updateToolbar();
         })
       }),
-      // editor.registerCommand(CAN_UNDO_COMMAND, payload => false, LowPriority),
-      // editor.registerCommand(CAN_REDO_COMMAND, payload => false, LowPriority),
-      editor.registerCommand(CAN_UNDO_COMMAND, () => false, LowPriority),
-      editor.registerCommand(CAN_REDO_COMMAND, () => false, LowPriority),
+      editor.registerCommand(CAN_UNDO_COMMAND, (/* payload */) => false, LowPriority),
+      editor.registerCommand(CAN_REDO_COMMAND, (/* payload */) => false, LowPriority),
     );
   }, [editor, updateToolbar])
 
   const activeButtonStyle = {
-    // background: theme.colors.paleIndigo[7],
     background: theme.colors.myGreen[7],
     color: theme.white,
   };
 
   return (
     <div style={{ border: `2px solid ${theme.colors.myGreen[7]}`, padding: 3, background: theme.colors.myGreen[0] }}>
-      {/* <Button.Group>
-        <ActionIcon variant="default"><IconArrowBackUp /></ActionIcon>
-        <ActionIcon variant="default"><IconArrowForwardUp /></ActionIcon>
-      </Button.Group> */}
       <Group gap={2}>
         <ActionIcon color={theme.black} variant='transparent'><IconArrowBackUp /></ActionIcon>
         <ActionIcon color={theme.black} variant='transparent'><IconArrowForwardUp /></ActionIcon>
