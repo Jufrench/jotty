@@ -20,32 +20,34 @@ import { $isListItemNode, /* ListType, */ ListNode, /* INSERT_UNORDERED_LIST_COM
   INSERT_ORDERED_LIST_COMMAND, INSERT_CHECK_LIST_COMMAND */ } from "@lexical/list";
 import { $createLinkNode } from '@lexical/link';
 
-import FontSizeMenu from './FontSizeMenu';
+// import FontSizeMenu from './FontSizeMenu';
 import PopoverColorPicker from './PopoverColorPicker';
+// import { useClickOutside } from '@mantine/hooks';
+import MenuDropdown from './MenuDropdown';
 
 const LowPriority: CommandListenerPriority = 1;
 
 const textElementOptions = [
-  { label: "Paragraph", tag: "p", domElement: <IconParkingCircle /> },
-  { label: "Heading 1", tag: "h1", domElement: <IconH1 /> },
-  { label: "Heading 2", tag: "h2", domElement: <IconH2 /> },
-  { label: "Heading 3", tag: "h3", domElement: <IconH3 /> },
-  { label: "Heading 4", tag: "h4", domElement: <IconH4 /> },
-  { label: "Heading 5", tag: "h5", domElement: <IconH5 /> },
-  { label: "Heading 6", tag: "h6", domElement: <IconH6 /> },
+  { label: "Paragraph", type: "p", domElement: <IconParkingCircle /> },
+  { label: "Heading 1", type: "h1", domElement: <IconH1 /> },
+  { label: "Heading 2", type: "h2", domElement: <IconH2 /> },
+  { label: "Heading 3", type: "h3", domElement: <IconH3 /> },
+  { label: "Heading 4", type: "h4", domElement: <IconH4 /> },
+  { label: "Heading 5", type: "h5", domElement: <IconH5 /> },
+  { label: "Heading 6", type: "h6", domElement: <IconH6 /> },
 ];
 
 const textAlignOptions = [
-  { alignment: "left", domElement: <IconAlignLeft /> },
-  { alignment: "center", domElement: <IconAlignCenter /> },
-  { alignment: "right", domElement: <IconAlignRight /> },
-  { alignment: "justify", domElement: <IconAlignJustified /> },
+  { label: "left", type: "left", domElement: <IconAlignLeft /> },
+  { label: "center", type: "center", domElement: <IconAlignCenter /> },
+  { label: "right", type: "right", domElement: <IconAlignRight /> },
+  { label: "justify", type: "justify", domElement: <IconAlignJustified /> },
 ];
 
 const textCaseOptions = [
-  { case: "uppercase", domElement: <IconLetterCaseUpper /> },
-  { case: "lowercase", domElement: <IconLetterCaseLower /> },
-  { case: "capitalize", domElement: <IconLetterCase /> },
+  { label: "uppercase", type: "uppercase", domElement: <IconLetterCaseUpper /> },
+  { label: "lowercase", type: "lowercase", domElement: <IconLetterCaseLower /> },
+  { label: "capitalize", type: "capitalize", domElement: <IconLetterCase /> },
 ];
 
 // const listTypeOptions = [
@@ -65,7 +67,7 @@ export default function ToolbarPlugin() {
   const [isUnderlineActive, setIsUnderlineActive] = useState<boolean>(false);
   const [isStrikethroughActive, setIsStrikethroughActive] = useState<boolean>(false);
   const [urlLinkInput, setUrlLinkInput] = useState("");
-  const [urlLink, setUrlLink] = useState("");
+  const [/* urlLink */, setUrlLink] = useState("");
   const [textColor, setTextColor] = useState<string>("");
   const [isTextColorPickerOpen, setIsTextColorPickerOpen] = useState<boolean>(false);
   // const [opened, { close, open }] = useDisclosure(false);
@@ -80,6 +82,19 @@ export default function ToolbarPlugin() {
   const toggleTextColor = () => {
     setIsTextColorPickerOpen(!isTextColorPickerOpen);
   };
+
+  // CLICKAWAYS FOR MENUS
+  // const textElRef = useClickOutside(() => setIsTextElOpen(false));
+  // let textElRef = null;
+  // let alignRef = null;
+  // const basicMenuRef = 
+
+  // Considering dynamically creating menu refs
+  // const menuRefs = [textElRef, alignRef];
+
+  // const handleClickOutside = (refEl: any) => {
+  //   refEl = useClickOutside(() => setIsTextElOpen(false));
+  // }
 
 
   // HANDLE FORMATTING OF TEXT
@@ -298,37 +313,41 @@ export default function ToolbarPlugin() {
         <ActionIcon color={theme.black} variant='transparent'><IconArrowForwardUp /></ActionIcon>
         <Divider orientation='vertical' color='#99a0ca' />
 
-        {/* Text Element Menu Selection */}
-        <Menu opened={isTextElOpen}>
+        {/* TEXT ELEMENT MENU SELECTION */}
+        <MenuDropdown
+          menuItems={textElementOptions}
+          onClick={newValue => formatTextElementType(newValue)}
+          selectedItem={textType} />
+        {/* <Menu opened={isTextElOpen}>
           <Menu.Target>
             <Button
               color={theme.black}
               onClick={() => setIsTextElOpen(!isTextElOpen)}
               rightSection={isTextElOpen ? <IconTriangleFilled size={8} /> : <IconTriangleInvertedFilled size={8} />}
               size='xs'
-              variant='transparent'
-            >
+              variant='transparent'>
             {textType === ""
               ? textElementOptions[0].domElement
-              : textElementOptions[textElementOptions.findIndex(item => item.tag === textType)]?.domElement}
+              : textElementOptions[textElementOptions.findIndex(item => item.type === textType)]?.domElement}
             </Button>
           </Menu.Target>
-          <Menu.Dropdown style={{ background: theme.colors.myGreen[1] }}>
-            {textElementOptions.map(item => {
-              return (
-                <Menu.Item key={item.label} onClick={() => formatTextElementType(item.tag)}>
-                  <Group>
-                    <>{item.domElement}</>
-                    <span>{item.label}</span>
-                  </Group>
-                </Menu.Item>
-              );
-            })}
-          </Menu.Dropdown>
-        </Menu>
+          {isTextElOpen &&
+            <Menu.Dropdown style={{ background: theme.colors.myGreen[1] }}>
+              {textElementOptions.map(item => {
+                return (
+                  <Menu.Item key={item.label} onClick={() => formatTextElementType(item.type)}>
+                    <Group>
+                      <>{item.domElement}</>
+                      <span>{item.label}</span>
+                    </Group>
+                  </Menu.Item>
+                );
+              })}
+            </Menu.Dropdown>}
+        </Menu> */}
 
         {/* Font Size Menu Selection */}
-        <FontSizeMenu fontSize={"12"} onInputChange={(value) => console.log('value:', value)} />
+        {/* <FontSizeMenu fontSize={"12"} onInputChange={(value) => console.log('value:', value)} /> */}
         <Divider orientation='vertical' color='#99a0ca' ml={4} />
         <ActionIcon color={theme.black} style={isBoldActive ? activeButtonStyle : {}} onClick={handleFormatBold} variant='transparent'><IconBold /></ActionIcon>
         <ActionIcon color={theme.black} style={isItalicActive ? activeButtonStyle : {}} onClick={handleFormatItalic} variant='transparent'><IconItalic /></ActionIcon>
@@ -352,7 +371,14 @@ export default function ToolbarPlugin() {
         </ActionIcon>
         {/* <PopoverColorPicker opened={isColorPickerOpen} /> */}
         <Divider orientation='vertical' color='#99a0ca' />
-        <Menu opened={isTextAlignOpen}>
+
+        {/* TEXT ALIGN MENU SELECTION */}
+        <MenuDropdown
+          menuItems={textAlignOptions}
+          onClick={newValue => formatTextAlign(newValue)}
+          selectedItem={textAlign} />
+
+        {/* <Menu opened={isTextAlignOpen}>
           <Menu.Target>
               <Button
                 color={theme.black}
@@ -363,25 +389,29 @@ export default function ToolbarPlugin() {
               >
               {textAlign === ""
                 ? textAlignOptions[0].domElement
-                : textAlignOptions[textAlignOptions.findIndex(item => item.alignment === textAlign)]?.domElement}
+                : textAlignOptions[textAlignOptions.findIndex(item => item.type === textAlign)]?.domElement}
               </Button>
             </Menu.Target>
           <Menu.Dropdown style={{ background: theme.colors.myGreen[1] }}>
             {textAlignOptions.map(item => {
               return (
-                <Menu.Item key={item.alignment} onClick={() => formatTextAlign(item.alignment)}>
+                <Menu.Item key={item.type} onClick={() => formatTextAlign(item.type)}>
                   <Group>
                     {item.domElement}
-                    <span>{item.alignment}</span>
+                    <span>{item.label}</span>
                   </Group>
                 </Menu.Item>
               );
             })}
           </Menu.Dropdown>
-        </Menu>
+        </Menu> */}
 
-        {/* Text Case */}
-        <Menu>
+        {/* TEXT CASE MENU SELECTION */}
+        <MenuDropdown
+          menuItems={textCaseOptions}
+          onClick={newValue => formatTextCase(newValue)}
+          selectedItem={textCase} />
+        {/* <Menu>
           <Menu.Target>
             <Button
               color={theme.black}
@@ -390,22 +420,22 @@ export default function ToolbarPlugin() {
               variant='transparent'>
               {textCase === ""
                 ? textCaseOptions[0].domElement
-                : textCaseOptions[textCaseOptions.findIndex(item => item.case === textCase)]?.domElement}
+                : textCaseOptions[textCaseOptions.findIndex(item => item.type === textCase)]?.domElement}
             </Button>
           </Menu.Target>
           <Menu.Dropdown style={{ background: theme.colors.myGreen[1] }}>
             {textCaseOptions.map(item => {
                 return (
-                  <Menu.Item key={item.case} onClick={() => formatTextCase(item.case)}>
+                  <Menu.Item key={item.type} onClick={() => formatTextCase(item.type)}>
                     <Group>
                       {item.domElement}
-                      <span>{item.case}</span>
+                      <span>{item.label}</span>
                     </Group>
                   </Menu.Item>
                 );
               })}
           </Menu.Dropdown>
-        </Menu>
+        </Menu> */}
 
         {/* Add Link */}
         <Popover>
