@@ -1,9 +1,8 @@
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 
-import { ActionIcon, Button, Divider, Group, Menu, Popover, Stack, TextInput, useMantineTheme } from '@mantine/core';
+import { ActionIcon, Divider, Group, Popover, Stack, TextInput, useMantineTheme } from '@mantine/core';
 import { IconArrowBackUp, IconArrowForwardUp, IconBold, IconItalic, IconH1, IconH2, IconH3,
-  IconH4, IconH5, IconH6, IconParkingCircle, IconStrikethrough,
-  IconTriangleInvertedFilled, IconTriangleFilled, IconUnderline, IconHighlight, IconLink,
+  IconH4, IconH5, IconH6, IconParkingCircle, IconStrikethrough, IconUnderline, IconHighlight, IconLink,
   IconAlignLeft, IconAlignCenter, IconAlignRight, IconAlignJustified, /* IconList, IconListNumbers, */
   IconClearFormatting, IconCheck, IconX, IconLetterCaseUpper, IconLetterCaseLower,
   IconLetterCase } from '@tabler/icons-react';
@@ -75,27 +74,9 @@ export default function ToolbarPlugin() {
   const [textCase, setTextCase] = useState<string>("uppercase");
   const [/* listType */, setListType] = useState<string>("bullet");
 
-  // MENU OPEN/CLOSE STATES
-  const [isTextElOpen, setIsTextElOpen] = useState<boolean>(false);
-  const [isTextAlignOpen, setIsTextAlignOpen] = useState<boolean>(false);
-
   const toggleTextColor = () => {
     setIsTextColorPickerOpen(!isTextColorPickerOpen);
   };
-
-  // CLICKAWAYS FOR MENUS
-  // const textElRef = useClickOutside(() => setIsTextElOpen(false));
-  // let textElRef = null;
-  // let alignRef = null;
-  // const basicMenuRef = 
-
-  // Considering dynamically creating menu refs
-  // const menuRefs = [textElRef, alignRef];
-
-  // const handleClickOutside = (refEl: any) => {
-  //   refEl = useClickOutside(() => setIsTextElOpen(false));
-  // }
-
 
   // HANDLE FORMATTING OF TEXT
   // =========================
@@ -131,7 +112,6 @@ export default function ToolbarPlugin() {
         ).append($createTextNode(linkText));
 
         selection.insertNodes([linkNode]);
-        console.log('yo!', linkNode)
       }
     });
   };
@@ -318,33 +298,6 @@ export default function ToolbarPlugin() {
           menuItems={textElementOptions}
           onClick={newValue => formatTextElementType(newValue)}
           selectedItem={textType} />
-        {/* <Menu opened={isTextElOpen}>
-          <Menu.Target>
-            <Button
-              color={theme.black}
-              onClick={() => setIsTextElOpen(!isTextElOpen)}
-              rightSection={isTextElOpen ? <IconTriangleFilled size={8} /> : <IconTriangleInvertedFilled size={8} />}
-              size='xs'
-              variant='transparent'>
-            {textType === ""
-              ? textElementOptions[0].domElement
-              : textElementOptions[textElementOptions.findIndex(item => item.type === textType)]?.domElement}
-            </Button>
-          </Menu.Target>
-          {isTextElOpen &&
-            <Menu.Dropdown style={{ background: theme.colors.myGreen[1] }}>
-              {textElementOptions.map(item => {
-                return (
-                  <Menu.Item key={item.label} onClick={() => formatTextElementType(item.type)}>
-                    <Group>
-                      <>{item.domElement}</>
-                      <span>{item.label}</span>
-                    </Group>
-                  </Menu.Item>
-                );
-              })}
-            </Menu.Dropdown>}
-        </Menu> */}
 
         {/* Font Size Menu Selection */}
         {/* <FontSizeMenu fontSize={"12"} onInputChange={(value) => console.log('value:', value)} /> */}
@@ -378,66 +331,13 @@ export default function ToolbarPlugin() {
           onClick={newValue => formatTextAlign(newValue)}
           selectedItem={textAlign} />
 
-        {/* <Menu opened={isTextAlignOpen}>
-          <Menu.Target>
-              <Button
-                color={theme.black}
-                onClick={() => setIsTextAlignOpen(!isTextAlignOpen)}
-                rightSection={isTextAlignOpen ? <IconTriangleFilled size={8} /> : <IconTriangleInvertedFilled size={8} />}
-                size='xs'
-                variant='transparent'
-              >
-              {textAlign === ""
-                ? textAlignOptions[0].domElement
-                : textAlignOptions[textAlignOptions.findIndex(item => item.type === textAlign)]?.domElement}
-              </Button>
-            </Menu.Target>
-          <Menu.Dropdown style={{ background: theme.colors.myGreen[1] }}>
-            {textAlignOptions.map(item => {
-              return (
-                <Menu.Item key={item.type} onClick={() => formatTextAlign(item.type)}>
-                  <Group>
-                    {item.domElement}
-                    <span>{item.label}</span>
-                  </Group>
-                </Menu.Item>
-              );
-            })}
-          </Menu.Dropdown>
-        </Menu> */}
-
         {/* TEXT CASE MENU SELECTION */}
         <MenuDropdown
           menuItems={textCaseOptions}
           onClick={newValue => formatTextCase(newValue)}
           selectedItem={textCase} />
-        {/* <Menu>
-          <Menu.Target>
-            <Button
-              color={theme.black}
-              rightSection={isTextElOpen ? <IconTriangleFilled size={8} /> : <IconTriangleInvertedFilled size={8} />}
-              size='xs'
-              variant='transparent'>
-              {textCase === ""
-                ? textCaseOptions[0].domElement
-                : textCaseOptions[textCaseOptions.findIndex(item => item.type === textCase)]?.domElement}
-            </Button>
-          </Menu.Target>
-          <Menu.Dropdown style={{ background: theme.colors.myGreen[1] }}>
-            {textCaseOptions.map(item => {
-                return (
-                  <Menu.Item key={item.type} onClick={() => formatTextCase(item.type)}>
-                    <Group>
-                      {item.domElement}
-                      <span>{item.label}</span>
-                    </Group>
-                  </Menu.Item>
-                );
-              })}
-          </Menu.Dropdown>
-        </Menu> */}
 
-        {/* Add Link */}
+        {/* ADD LINK */}
         <Popover>
           <Popover.Target>
             <ActionIcon
