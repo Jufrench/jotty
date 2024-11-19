@@ -11,6 +11,14 @@ interface PopoverColorPickerProps {
 export default function PopoverColorPicker(props: PopoverColorPickerProps) {
   const theme = useMantineTheme();
 
+  // const [isOpen, setIsOpen] = useState(false);
+  // const menuRef = useClickOutside(() => setIsOpen(false));
+
+  // const handleClickMenuItem = (type: string) => {
+  //   props.onClick(type);
+  //   setIsOpen(false);
+  // };
+
   return (
     <Popover
       opened={props.opened}

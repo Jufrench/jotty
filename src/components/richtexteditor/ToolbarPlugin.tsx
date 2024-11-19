@@ -307,16 +307,20 @@ export default function ToolbarPlugin() {
         <ActionIcon color={theme.black} style={isUnderlineActive ? activeButtonStyle : {}} onClick={handleFormatUnderline} variant='transparent'><IconUnderline /></ActionIcon>
         <ActionIcon color={theme.black} style={isStrikethroughActive ? activeButtonStyle : {}} onClick={handleFormatStrikethrough} variant='transparent'><IconStrikethrough /></ActionIcon>
 
-        {/* Text Color */}
+        {/* TEXT COLOR */}
         <PopoverColorPicker
           color={textColor}
           onChange={handleTextColorChange}
           onClick={toggleTextColor}
           opened={isTextColorPickerOpen} />
+
+        {/* TEXT HIGHLIGHT */}
         <ActionIcon
           color={theme.black}
           onClick={() => {
+            console.log('hey!')
             handleTextColorChange(textColor);
+            toggleTextColor();
             // setIsColorPickerOpen(!isColorPickerOpen);
           }}
           variant='transparent'>
